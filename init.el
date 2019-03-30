@@ -39,11 +39,10 @@ There are two things you can do about this warning:
   ("M-n" . highlight-symbol-next)
   ("M-p" . highlight-symbol-prev))
 
-;; (use-package ag)
+(use-package ag)
 
-;; (use-package helm-ag
-;;   :after ag
-;;   :commands helm-do-ag)
+(use-package helm-ag
+  :after ag)
 
 (use-package helm-projectile
   :after helm
