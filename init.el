@@ -23,7 +23,7 @@ There are two things you can do about this warning:
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (company-lsp helm-projectile flycheck-rust cargo rust-mode toml-mode company lsp-ui flycheck helm use-package))))
+    (diminish ag helm-ag ace-window highlight-symbol company-lsp helm-projectile flycheck-rust cargo rust-mode toml-mode company lsp-ui flycheck helm use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -31,16 +31,38 @@ There are two things you can do about this warning:
  ;; If there is more than one, they won't work right.
  )
 
+(require 'use-package)
+(setq use-package-always-ensure t)
+
+(use-package highlight-symbol
+  :bind
+  ("M-n" . highlight-symbol-next)
+  ("M-p" . highlight-symbol-prev))
+
+;; (use-package ag)
+
+;; (use-package helm-ag
+;;   :after ag
+;;   :commands helm-do-ag)
+
+(use-package helm-projectile
+  :after helm
+  :config
+  (helm-projectile-on))
+
+(use-package diminish)
+
 (use-package helm
+  :diminish helm-mode
   :init
-  :bind (("M-x" . helm-M-x)
-	 ("M-y" . helm-show-kill-ring)
-         ("C-x f" . helm-recentf)
-         ("C-x b" . helm-mini)
-         ("M-/" . helm-dabbrev)
-	 ("C-c f" . helm-projectile-find-file-dwim))
-  :config (progn
-            (helm-mode 1)))
+  (require 'helm-config)
+  :bind
+  ("C-c f" . helm-projectile-find-file-dwim)
+  ("M-x" . helm-M-x)
+  ("C-x r b" . helm-filtered-bookmarks)
+  ("C-x C-f" . helm-find-files)
+  :init
+  (helm-mode 1))
 
 (use-package flycheck
   :hook (prog-mode . flycheck-mode)
@@ -49,6 +71,7 @@ There are two things you can do about this warning:
   ("M-<up>" . flycheck-previous-error))
 
 (use-package company
+  :diminish company-mode
   :hook (prog-mode . company-mode)
   :config (setq company-tooltip-align-annotations t)
   (setq company-minimum-prefix-length 1))
@@ -62,12 +85,18 @@ There are two things you can do about this warning:
 
 (use-package lsp-mode
   :commands lsp
+  :diminish lsp-mode
   :config
-  (require 'lsp-clients))
+  (require 'lsp-clients)
+  (setq lsp-prefer-flymake nil))
 
 (use-package lsp-ui)
 
 (use-package toml-mode)
+
+
+(use-package eldoc
+  :diminish eldoc-mode)
 
 (use-package rust-mode
   :hook (rust-mode . lsp)
@@ -76,7 +105,8 @@ There are two things you can do about this warning:
 
 ;; Add keybindings for interacting with Cargo
 (use-package cargo
-  :hook (rust-mode . cargo-minor-mode))
+  :hook (rust-mode . cargo-minor-mode)
+  :diminish cargo-minor-mode)
 
 (use-package flycheck-rust
   :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
@@ -85,39 +115,6 @@ There are two things you can do about this warning:
 ;; (which-function-mode 1)
 (global-set-key (kbd "C--") #'undo)
 (global-set-key (kbd "M-g") #'goto-line)
-
-(defvar mode-line-cleaner-alist
-  '((auto-complete-mode . "")
-    (yas/minor-mode . "")
-    (cargo-minor-mode . "")
-    (helm-mode . "")
-    (lsp-mode . "")
-    (flymake-mode . "")
-    (eldoc-mode . "")
-    (company-mode . "")
-    ;; Major modes
-    (python-mode . "Py")
-    (emacs-lisp-mode . "EL"))
-  "Alist for `clean-mode-line`.
-
-When you add a new element to the alist, keep in mind that you
-must pass the correct minor/major mode symbol and a string you
-want to use in the modeline *in lieu of* the original.")
-
-(require 'cl)
-(defun clean-mode-line ()
-  (interactive)
-  (loop for cleaner in mode-line-cleaner-alist
-        do (let* ((mode (car cleaner))
-                 (mode-str (cdr cleaner))
-                 (old-mode-str (cdr (assq mode minor-mode-alist))))
-             (when old-mode-str
-                 (setcar old-mode-str mode-str))
-               ;; major mode
-             (when (eq mode major-mode)
-               (setq mode-name mode-str)))))
-
-(add-hook 'after-change-major-mode-hook 'clean-mode-line)
 
 (setq inhibit-startup-screen t)
 
