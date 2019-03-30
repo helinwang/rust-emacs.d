@@ -5,3 +5,4 @@ bookmarks
 auto-save-list/
 melpa/
 .lsp-session-*
+.DS_Store
