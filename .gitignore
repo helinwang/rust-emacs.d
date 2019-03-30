@@ -1,0 +1,7 @@
+recentf
+*~
+elpa/
+bookmarks
+auto-save-list/
+melpa/
+.lsp-session-*
