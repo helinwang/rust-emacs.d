@@ -23,7 +23,7 @@ There are two things you can do about this warning:
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (diminish ag helm-ag ace-window highlight-symbol company-lsp helm-projectile flycheck-rust cargo rust-mode toml-mode company lsp-ui flycheck helm use-package))))
+    (racer lsp-ui diminish ag helm-ag ace-window highlight-symbol company-lsp helm-projectile flycheck-rust cargo rust-mode toml-mode company flycheck helm use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -33,6 +33,9 @@ There are two things you can do about this warning:
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+(use-package ace-window
+  :bind ("M-o" . ace-window))
 
 (use-package highlight-symbol
   :bind
@@ -89,7 +92,9 @@ There are two things you can do about this warning:
   (require 'lsp-clients)
   (setq lsp-prefer-flymake nil))
 
-(use-package lsp-ui)
+(use-package lsp-ui
+  :config
+  (setq lsp-ui-doc-enable nil))
 
 (use-package toml-mode)
 
@@ -110,6 +115,14 @@ There are two things you can do about this warning:
 (use-package flycheck-rust
   :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
 
+(use-package racer
+  :after rust-mode
+  :diminish racer-mode
+  :init
+  (add-hook 'rust-mode-hook #'racer-mode)
+  :bind
+  ("M-j" . racer-find-definition)
+  (:map racer-mode-map ("M-." . #'xref-find-definitions)))
 
 ;; (which-function-mode 1)
 (global-set-key (kbd "C--") #'undo)
