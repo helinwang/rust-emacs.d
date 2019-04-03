@@ -124,8 +124,7 @@ There are two things you can do about this warning:
 (use-package racer
   :after rust-mode
   :diminish racer-mode
-  :init
-  (add-hook 'rust-mode-hook #'racer-mode)
+  :hook (rust-mode . racer-mode)
   :bind
   ("M-j" . racer-find-definition)
   (:map racer-mode-map ("M-." . #'xref-find-definitions)))
@@ -152,6 +151,12 @@ There are two things you can do about this warning:
   (setq flycheck-gometalinter-disable-linters '("gotype"))
   (setq flycheck-gometalinter-deadline "10s"))
 
+(use-package auto-complete
+  :hook (go-mode . auto-complete-mode))
+
+(use-package go-autocomplete
+  :demand t)
+
 (use-package go-mode
   :after go-eldoc
   :bind
@@ -163,19 +168,9 @@ There are two things you can do about this warning:
   :config
   (add-hook 'before-save-hook 'gofmt-before-save)
   (setq gofmt-command "goimports")
-  (if (not (string-match "go" compile-command)) ; set compile command default
-      (set (make-local-variable 'compile-command)
-	   "go build -i -v && go test -v && go vet"))
-
+  (set (make-local-variable 'compile-command)
+       "go build -i -v && go test -v && go vet")
   (go-eldoc-setup))
-
-;; (use-package auto-complete
-;;   :hook go-mode)
-
-(use-package go-autocomplete
-  :demand
-  :config
-  (auto-complete-mode 1))
 
 ;; (use-package auto-complete-config
 ;;   :hook go-mode
