@@ -7,3 +7,4 @@ melpa/
 .lsp-session-*
 .DS_Store
 eshell/
+ac-comphist.dat

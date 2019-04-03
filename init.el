@@ -23,13 +23,15 @@ There are two things you can do about this warning:
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (racer lsp-ui diminish ag helm-ag ace-window highlight-symbol company-lsp helm-projectile flycheck-rust cargo rust-mode toml-mode company flycheck helm use-package))))
+    (go-guru auto-complete-config go-autocomplete go-rename racer lsp-ui diminish ag helm-ag ace-window highlight-symbol company-lsp helm-projectile flycheck-rust cargo rust-mode toml-mode company flycheck helm use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(toggle-debug-on-error)
 
 (require 'use-package)
 (setq use-package-always-ensure t)
@@ -40,7 +42,11 @@ There are two things you can do about this warning:
 (use-package highlight-symbol
   :bind
   ("M-n" . highlight-symbol-next)
-  ("M-p" . highlight-symbol-prev))
+  ("M-p" . highlight-symbol-prev)
+  :config
+  (setq highlight-symbol-nav-mode t)
+  (setq highlight-symbol-mode t)
+  (setq highlight-symbol-idle-delay 0.3))
 
 (use-package ag)
 
@@ -124,6 +130,77 @@ There are two things you can do about this warning:
   ("M-j" . racer-find-definition)
   (:map racer-mode-map ("M-." . #'xref-find-definitions)))
 
+
+;; setup for Go
+;; install binaries:
+;; go get -u golang.org/x/tools/cmd/...
+;; go get -u github.com/rogpeppe/godef/...
+;; go get -u github.com/nsf/gocode
+;; go get -u golang.org/x/tools/cmd/goimports
+;; go get -u golang.org/x/tools/cmd/guru
+;; go get -u github.com/dougm/goflymake
+;; go get -u github.com/alecthomas/gometalinter
+;; gometalinter --install --update
+;; go get -u golang.org/x/tools/cmd/gorename
+
+(use-package flycheck-gometalinter
+  :demand t
+  :config
+  (flycheck-gometalinter-setup)
+  (setq flycheck-gometalinter-vendor t)
+  (setq flycheck-gometalinter-fast t)
+  (setq flycheck-gometalinter-disable-linters '("gotype"))
+  (setq flycheck-gometalinter-deadline "10s"))
+
+(use-package go-mode
+  :after go-eldoc
+  :bind
+  ("M-," . pop-tag-mark)
+  ("M-p" . compile)            ; Invoke compiler
+  ("M-P" . recompile)          ; Redo most recent compile cmd
+  ("M-<down>" . next-error)
+  ("M-<up>" . previous-error)
+  :config
+  (add-hook 'before-save-hook 'gofmt-before-save)
+  (setq gofmt-command "goimports")
+  (if (not (string-match "go" compile-command)) ; set compile command default
+      (set (make-local-variable 'compile-command)
+	   "go build -i -v && go test -v && go vet"))
+
+  (go-eldoc-setup))
+
+;; (use-package auto-complete
+;;   :hook go-mode)
+
+(use-package go-autocomplete
+  :demand
+  :config
+  (auto-complete-mode 1))
+
+;; (use-package auto-complete-config
+;;   :hook go-mode
+;;   :config (ac-config-default))
+
+(use-package go-eldoc)
+
+(use-package yasnippet
+  :demand t
+  :config
+  (yas-global-mode 1)
+  (setq yas-snippet-dirs
+	'("~/.emacs.d/snippets")))
+
+(use-package go-guru
+  :demand t
+  :bind
+  ("M-d" . go-guru-describe)
+  ("M-." . go-guru-definition) ; godef-jump)
+  ("M-?" . go-guru-referrers)
+  :config
+  (go-guru-hl-identifier-mode) ; highlight identifiers
+  )
+
+;; other setups
 ;; (which-function-mode 1)
 (global-set-key (kbd "C--") #'undo)
 (global-set-key (kbd "M-g") #'goto-line)
