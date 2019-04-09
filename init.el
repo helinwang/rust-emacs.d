@@ -23,7 +23,7 @@ There are two things you can do about this warning:
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (go-guru auto-complete-config go-autocomplete go-rename racer lsp-ui diminish ag helm-ag ace-window highlight-symbol company-lsp helm-projectile flycheck-rust cargo rust-mode toml-mode company flycheck helm use-package))))
+    (magit go-guru auto-complete-config go-autocomplete go-rename racer lsp-ui diminish ag helm-ag ace-window highlight-symbol company-lsp helm-projectile flycheck-rust cargo rust-mode toml-mode company flycheck helm use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -161,7 +161,6 @@ There are two things you can do about this warning:
   :after go-eldoc
   :bind
   ("M-," . pop-tag-mark)
-  ("M-p" . compile)            ; Invoke compiler
   ("M-P" . recompile)          ; Redo most recent compile cmd
   ("M-<down>" . next-error)
   ("M-<up>" . previous-error)
@@ -194,6 +193,10 @@ There are two things you can do about this warning:
   :config
   (go-guru-hl-identifier-mode) ; highlight identifiers
   )
+
+(use-package magit
+  :ensure t
+  :bind (("C-x g" . magit-status)))
 
 ;; other setups
 ;; (which-function-mode 1)
