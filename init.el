@@ -167,7 +167,7 @@ There are two things you can do about this warning:
   :config
   (add-hook 'before-save-hook 'gofmt-before-save)
   (setq gofmt-command "goimports")
-  (set (make-local-variable 'compile-command)
+  (setq compile-command
        "go build -i -v && go test -v && go vet")
   (go-eldoc-setup))
 
