@@ -110,8 +110,11 @@ There are two things you can do about this warning:
 
 (use-package rust-mode
   :hook (rust-mode . lsp)
-  :bind ("C-c r" . rust-run)
-  :config (setq rust-format-on-save t))
+  :bind
+  ("C-c g" . rust-run)
+  ("C-c b" . rust-test)
+  :config
+  (setq rust-format-on-save t))
 
 ;; Add keybindings for interacting with Cargo
 (use-package cargo
