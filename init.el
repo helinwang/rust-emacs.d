@@ -74,6 +74,7 @@ There are two things you can do about this warning:
 
 (use-package flycheck
   :hook (prog-mode . flycheck-mode)
+  :demand t
   :bind
   ("M-<down>" . flycheck-next-error)
   ("M-<up>" . flycheck-previous-error))
@@ -112,7 +113,7 @@ There are two things you can do about this warning:
   :hook (rust-mode . lsp)
   :bind
   ("C-c g" . rust-run)
-  ("C-c b" . rust-test)
+  ("C-c t" . rust-test)
   :config
   (setq rust-format-on-save t))
 
